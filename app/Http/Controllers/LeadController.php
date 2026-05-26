@@ -13,7 +13,7 @@ class LeadController extends Controller
     }
 
     public function create(){
-        return view('leads.create')''
+        return view('leads.create');
     }
 
     public function store(Request $request){
