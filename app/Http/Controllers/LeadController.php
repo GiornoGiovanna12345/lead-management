@@ -4,12 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Lead;
 
 class LeadController extends Controller
 {
     public function index(){
         $leads=Lead::all();
-        return view('leads.index'. compact('leads'));
+        return view('leads.index', compact('leads'));
     }
 
     public function create(){
@@ -30,9 +31,9 @@ class LeadController extends Controller
         return view('leads.edit',compact('lead'));
     }
 
-    public function store(Request $request, Lead $lead){
+    public function update(Request $request, Lead $lead){
         $request->validate(['name'=>'required','email'=>'required|email']);
-        $lead->upadte($request->all());
+        $lead->update($request->all());
         return redirect()->route('leads.index')->with('success','Lead updated succesfully!');
     }
 
