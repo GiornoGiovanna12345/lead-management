@@ -11,8 +11,20 @@ Route::get('/', function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    $totalLeads = \App\Models\Lead::count();
+    $pendingLeads = \App\Models\Lead::where('status', 'Pending')->count();
+    $convertedLeads = \App\Models\Lead::where('status', 'Converted')->count();
+    $rejectedLeads = \App\Models\Lead::where('status', 'Rejected')->count();
+    $recentLeads = \App\Models\Lead::latest()->take(5)->get();
+
+    return view('dashboard', compact(
+        'totalLeads',
+        'pendingLeads',
+        'convertedLeads',
+        'rejectedLeads',
+        'recentLeads'
+    ));
+})->name('dashboard');
 
     Route::resource('leads', LeadController::class);
     Route::resource('users', UserController::class)->only(['index', 'create', 'store', 'destroy']);
