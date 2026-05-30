@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Lead;
-
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 class LeadController extends Controller
 {
     public function index(){
@@ -19,12 +19,12 @@ class LeadController extends Controller
 
     public function create(){
         $staff=User::where('role','staff')->get();
-        return view('leads.create'.compact('staff'));
+        return view('leads.create',compact('staff'));
     }
 
     public function store(Request $request){
         $request->validate(['name'=>'required','email'=>'required|email']);
-        Lead::create($request->all());
+        Lead::create($request->only(['name', 'email', 'phone', 'company', 'status', 'notes', 'assigned_to']));
         return redirect()->route('leads.index')->with('success','Lead created succesfully!');
     }
     

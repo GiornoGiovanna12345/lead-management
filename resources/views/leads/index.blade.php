@@ -1,12 +1,12 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight"> 
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             Leads
         </h2>
     </x-slot>
 
     <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8"> {{--tailwind classes--}}
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
             @if(session('success'))
                 <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
@@ -17,10 +17,12 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-lg font-medium">All Leads</h3>
-                    <a href="{{ route('leads.create') }}" 
+                    @if(Auth::user()->role == 'admin')
+                    <a href="{{ route('leads.create') }}"
                        class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
                         Add Lead
                     </a>
+                    @endif
                 </div>
 
                 <table class="w-full text-left border-collapse">
@@ -31,6 +33,7 @@
                             <th class="py-2 px-4">Phone</th>
                             <th class="py-2 px-4">Company</th>
                             <th class="py-2 px-4">Status</th>
+                            <th class="py-2 px-4">Assigned To</th>
                             <th class="py-2 px-4">Actions</th>
                         </tr>
                     </thead>
@@ -51,26 +54,31 @@
                                 </span>
                             </td>
                             <td class="py-2 px-4">
-                                <a href="{{ route('leads.show', $lead) }}" 
+                                {{ $lead->assignedTo->name ?? 'Unassigned' }}
+                            </td>
+                            <td class="py-2 px-4">
+                                <a href="{{ route('leads.show', $lead) }}"
                                    class="text-blue-500 hover:underline mr-2">View</a>
-                                <a href="{{ route('leads.edit', $lead) }}" 
+                                @if(Auth::user()->role == 'admin')
+                                <a href="{{ route('leads.edit', $lead) }}"
                                    class="text-yellow-500 hover:underline mr-2">Edit</a>
-                                <form action="{{ route('leads.destroy', $lead) }}" 
+                                <form action="{{ route('leads.destroy', $lead) }}"
                                       method="POST" class="inline">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" 
+                                    <button type="submit"
                                             class="text-red-500 hover:underline"
                                             onclick="return confirm('Are you sure?')">
                                         Delete
                                     </button>
                                 </form>
+                                @endif
                             </td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="6" class="py-4 px-4 text-center text-gray-500">
-                                No leads yet. Add your first lead!
+                            <td colspan="7" class="py-4 px-4 text-center text-gray-500">
+                                No leads yet.
                             </td>
                         </tr>
                         @endforelse
