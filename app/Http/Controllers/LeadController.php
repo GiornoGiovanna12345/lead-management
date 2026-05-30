@@ -9,12 +9,17 @@ use App\Models\Lead;
 class LeadController extends Controller
 {
     public function index(){
-        $leads=Lead::all();
-        return view('leads.index', compact('leads'));
+        if(Auth::user()->role=='admin'){
+            $leads=Lead::all();
+        }else{
+            $leads=Lead::where('assigned_to',Auth::id())->get();
+        }
+        return view('leads.index',compact('leads'));
     }
 
     public function create(){
-        return view('leads.create');
+        $staff=User::where('role','staff')->get();
+        return view('leads.create'.compact('staff'));
     }
 
     public function store(Request $request){
@@ -28,7 +33,8 @@ class LeadController extends Controller
     }
 
     public function edit(Lead $lead){
-        return view('leads.edit',compact('lead'));
+        $staff=User::where('role','staff')->get();
+        return view('leads.edit',compact('lead','staff'));
     }
 
     public function update(Request $request, Lead $lead){
