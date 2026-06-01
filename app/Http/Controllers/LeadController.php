@@ -8,13 +8,24 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 class LeadController extends Controller
 {
-    public function index(){
-        if(Auth::user()->role=='admin'){
-            $leads=Lead::all();
-        }else{
-            $leads=Lead::where('assigned_to',Auth::id())->get();
+    public function index(Request $request)
+    {
+        $search = $request->input('search');
+
+        if(Auth::user()->role == 'admin') {
+            $leads = Lead::when($search, function($query) use ($search) {
+                $query->where('name', 'like', '%'.$search.'%')
+                      ->orWhere('email', 'like', '%'.$search.'%');
+            })->get();
+        } else {
+            $leads = Lead::where('assigned_to', Auth::id())
+                ->when($search, function($query) use ($search) {
+                    $query->where('name', 'like', '%'.$search.'%')
+                          ->orWhere('email', 'like', '%'.$search.'%');
+                })->get();
         }
-        return view('leads.index',compact('leads'));
+
+        return view('leads.index', compact('leads', 'search'));
     }
 
     public function create(){

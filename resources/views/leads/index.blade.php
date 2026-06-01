@@ -25,6 +25,25 @@
                     @endif
                 </div>
 
+                {{-- Search Bar --}}
+                <form method="GET" action="{{ route('leads.index') }}" class="mb-4">
+                    <div class="flex gap-2">
+                        <input type="text" name="search" value="{{ $search ?? '' }}"
+                            placeholder="Search by name or email..."
+                            class="w-full border rounded px-3 py-2">
+                        <button type="submit"
+                            class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                            Search
+                        </button>
+                        @if($search)
+                        <a href="{{ route('leads.index') }}"
+                            class="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400">
+                            Clear
+                        </a>
+                        @endif
+                    </div>
+                </form>
+
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="border-b">
@@ -78,7 +97,7 @@
                         @empty
                         <tr>
                             <td colspan="7" class="py-4 px-4 text-center text-gray-500">
-                                No leads yet.
+                                No leads found.
                             </td>
                         </tr>
                         @endforelse
